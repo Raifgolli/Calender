@@ -1,0 +1,62 @@
+// ===== backend/package.json =====
+{
+  "name": "ib-planner-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IB Planner API — Express + SQLite + JWT",
+  "engines": { "node": ">=18.17" },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node -e \"require('./src/db')\"",
+    "reset-db": "node -e \"require('fs').rmSync(process.env.DATABASE_FILE||'./data/ibplanner.db',{force:true})\" && npm run migrate"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.15"
+  }
+}
+
+// ===== backend/.env.example =====
+# ---- core ----
+NODE_ENV=development
+PORT=4000
+PUBLIC_DIR=../frontend/public
+DATABASE_FILE=./data/ibplanner.db
+
+# ---- auth secrets (generate: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))") ----
+JWT_SECRET=replace-me-with-at-least-32-random-characters
+JWT_EXPIRES_IN=15m
+REFRESH_DAYS=30
+
+# ---- cookies / cors ----
+COOKIE_SECURE=false
+CORS_ORIGIN=http://localhost:4000,http://localhost:5173
+
+# ---- password reset email (optional; falls back to console logging) ----
+APP_URL=http://localhost:4000
+MAIL_FROM="IB Planner <no-reply@ibplanner.local>"
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=
+SMTP_PASS=
+# dev only: expose the reset token in the API response when SMTP is not configured
+DEV_EXPOSE_RESET_TOKEN=true
+
+// ===== backend/.gitignore =====
+node_modules/
+.env
+.env.*
+!.env.example
+data/
+*.db
+*.db-wal
+*.db-shm
+npm-debug.log*
